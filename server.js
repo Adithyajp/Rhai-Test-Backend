@@ -96,7 +96,7 @@ app.delete("/students/:id", async (req, res) => {
   return res.json(data);
 });
 
-const PORT = 8000;
+const PORT = process.env.PORT ||  8000;
 
 const server = app.listen(PORT, () => {
   // const url = `http://localhost:${PORT}/`
