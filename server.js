@@ -8,7 +8,8 @@ const Students = require("./models/students");
 app = express();
 
 //Database connection
-const url = "mongodb://localhost/rihal";
+const url =
+  "mongodb+srv://adithyajpp:cZAn4pLOHfVrzN7N@cluster0.lpuyqvw.mongodb.net/rihal";
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
 const connection = mongoose.connection;
 connection.once("open", () => {
@@ -34,8 +35,16 @@ app.post("/countries", async (req, res) => {
 
 app.delete("/countries/:id", async (req, res) => {
   console.log(req.body);
-  const data = await Countries.deleteOne({ id: req.params.id });
-  return res.json(data);
+  const check = await Students.findOne({ country_id: req.params.id });
+  if (check === undefined || check === null) {
+    const data = await Countries.deleteOne({  _id: req.params.id });
+    return res.json(data);
+  } else {
+    console.log(check);
+    return res
+      .status(404)
+      .send({ error: "Cannot delete country as students are assigned" });
+  }
 });
 
 ///Classes APIs
@@ -51,9 +60,17 @@ app.post("/classes", async (req, res) => {
 });
 
 app.delete("/classes/:id", async (req, res) => {
-  console.log(req.body);
-  const data = await Classes.deleteOne({ id: req.params.id });
-  return res.json(data);
+  console.log(req.params.id);
+  const check = await Students.findOne({ class_id: req.params.id });
+  if (check === undefined || check === null) {
+    const data = await Classes.deleteOne({ _id: req.params.id });
+    return res.json(data);
+  } else {
+    console.log(check);
+    return res
+      .status(404)
+      .send({ error: "Cannot delete class as students are assigned" });
+  }
 });
 
 ///Student APIs
@@ -74,8 +91,8 @@ app.post("/students", async (req, res) => {
 });
 
 app.delete("/students/:id", async (req, res) => {
-  console.log(req.body);
-  const data = await Students.deleteOne({ id: req.params.id });
+  console.log(req.params.id);
+  const data = await Students.deleteOne({ _id: req.params.id });
   return res.json(data);
 });
 
